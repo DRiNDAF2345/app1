@@ -127,13 +127,15 @@ class GameEngine(private val random: Random = Random.Default) {
     }
 
     private fun updateBullets() {
-        val iterator = state.bullets.iterator()
-        while (iterator.hasNext()) {
-            val b = iterator.next()
-            b.x += b.direction.dx * b.speed / 60f
-            b.y += b.direction.dy * b.speed / 60f
-            val hit = handleBulletHit(b)
-            if (hit) iterator.remove()
+        val activeBullets = state.bullets.toList()
+        activeBullets.forEach { bullet ->
+            val bulletIndex = state.bullets.indexOfFirst { it === bullet }
+            if (bulletIndex == -1) return@forEach
+            bullet.x += bullet.direction.dx * bullet.speed / 60f
+            bullet.y += bullet.direction.dy * bullet.speed / 60f
+            val hit = handleBulletHit(bullet)
+            val updatedBulletIndex = state.bullets.indexOfFirst { it === bullet }
+            if (hit && updatedBulletIndex != -1) state.bullets.removeAt(updatedBulletIndex)
         }
     }
 
