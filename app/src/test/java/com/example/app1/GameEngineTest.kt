@@ -10,6 +10,39 @@ import org.junit.Test
 
 class GameEngineTest {
     @Test
+    fun startingLevelSpawnsEnemyImmediately() {
+        val engine = GameEngine()
+
+        engine.start(0)
+
+        assertTrue(engine.state.enemies.isNotEmpty())
+    }
+
+    @Test
+    fun quickDirectionTapMovesPlayerBeforeNextFrame() {
+        val engine = GameEngine()
+        engine.start(0)
+        val startY = engine.state.player.y
+
+        engine.setDirection(Direction.Up)
+        engine.setDirection(null)
+        engine.update(16L)
+
+        assertTrue(engine.state.player.y < startY)
+    }
+
+    @Test
+    fun firingAddsBulletImmediately() {
+        val engine = GameEngine()
+        engine.start(0)
+        val bullets = engine.state.bullets.size
+
+        engine.firePlayer()
+
+        assertEquals(bullets + 1, engine.state.bullets.size)
+    }
+
+    @Test
     fun enemyBulletHitResetsPlayerWithoutConcurrentModification() {
         val engine = GameEngine()
         engine.start(0)
