@@ -14,11 +14,17 @@ class GameEngine(private val random: Random = Random.Default) {
 
     fun start(levelIndex: Int) {
         state = createState(levelIndex.coerceIn(0, Levels.all.lastIndex))
+        spawnEnemies(0L)
         version++
     }
 
     fun setDirection(direction: Direction?) {
         state.inputDirection = direction
+        if (direction != null && state.status == GameStatus.Playing) {
+            state.player.direction = direction
+            tryMoveTank(state.player, direction, state.player.speed / 14f)
+            version++
+        }
     }
 
     fun firePlayer() {
